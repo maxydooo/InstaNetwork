@@ -43,7 +43,7 @@ function App() {
   const [user, setUser] = useState(null);
 
   useEffect(() => {
-    const unsubscribe = auth.onAuthStateChanged((authUser) => { //listen for authentication change
+    const unsubscribe = auth.onAuthStateChanged((authUser) => {
       if (authUser) {
         // user has logged in...
         console.log(authUser);
@@ -54,7 +54,7 @@ function App() {
 
         } else {
           // if we just created someone...
-          return authUser.updateProfile({ //this will update the user profile in database as attribute
+          return authUser.updateProfile({
             displayName: username,
           });
         }
@@ -86,17 +86,18 @@ function App() {
     })
   }, []);
 
-  //sign up function
   const signUp = (event) => {
     event.preventDefault();
-    auth 
-    .createUserWithEmailAndPassword(email, password) //user authentication with email and password and will create the user
-    .then((authUser) => { //once user is authorized, then update the profile.
+
+    auth
+    .createUserWithEmailAndPassword(email, password)
+    .then((authUser) => {
       return authUser.user.updateProfile({
         displayName: username
       })
     })
-    .catch((error) => alert(error.message)) //backend validation from firebase to check if sufficeint sign up credentials
+    
+    .catch((error) => alert(error.message))
     
   }
 
@@ -114,6 +115,7 @@ function App() {
   
 
   return (
+
     <div className="app">
 
        <Modal
@@ -125,7 +127,7 @@ function App() {
             <center>
               <img
                 className="app_headerImage"
-                src="https://tse3.explicit.bing.net/th?id=OIP.eFfQlmK6AQch0u0rASiKmAHaHa&pid=Api&P=0&w=300&h=300"
+                src= "https://i.redd.it/l8cczd9174y51.png"
                 alt=""
               />
             </center>
@@ -162,7 +164,7 @@ function App() {
             <center>
               <img
                 className="app_headerImage"
-                src="https://tse3.explicit.bing.net/th?id=OIP.eFfQlmK6AQch0u0rASiKmAHaHa&pid=Api&P=0&w=300&h=300"
+                src= "https://i.redd.it/l8cczd9174y51.png"
                 alt=""
               />
             </center>
@@ -187,7 +189,7 @@ function App() {
       <div className="app_header">
         <img
           className="app_headerImage"
-          src="https://tse3.explicit.bing.net/th?id=OIP.eFfQlmK6AQch0u0rASiKmAHaHa&pid=Api&P=0&w=300&h=300"
+          src= "https://i.redd.it/l8cczd9174y51.png"
           alt=""
           />
            {user ? (
@@ -200,6 +202,13 @@ function App() {
       )}
       </div>
 
+      {user?.displayName ? (
+          <ImageUpload username={user.displayName}/>
+      ): (
+          <h3>Sorry you need to login to upload</h3>
+        
+      )}
+
       <div className="app_posts">
         <div className="app_postsLeft">
          {
@@ -210,7 +219,7 @@ function App() {
       </div>
       <div className="app_postsRight">
         <InstagramEmbed
-          url='https://www.instagram.com/p/B_uf9dmAGPw/'
+          url='https://www.instagram.com/p/BU8oZOjFPPb/'
           maxWidth={320}
           hideCaption={false}
           containerTagName='div'
@@ -225,16 +234,6 @@ function App() {
 
       </div>
     
-     
-
-      {user?.displayName ? (
-          <ImageUpload username={user.displayName}/>
-      ): (
-          <h3>Sorry you need to login to upload</h3>
-        
-      )}
-
-  x
 
 
     </div>
