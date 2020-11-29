@@ -4,7 +4,7 @@ import Post from './Post';
 import { db, auth } from './firebase';
 import { makeStyles } from '@material-ui/core/styles';
 import Modal from '@material-ui/core/Modal';
-import { Button, Input } from '@material-ui/core';
+import { Avatar, Button, Input } from '@material-ui/core';
 import ImageUpload from './ImageUpload'
 import InstagramEmbed from 'react-instagram-embed';
 
@@ -37,9 +37,12 @@ function App() {
   const [posts, setPosts] = useState([]);
   const [open, setOpen] = useState(false);
   const [openSignIn, setOpenSignIn] = useState(false);
+  const [openProfile, setOpenProfile] = useState(false);
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [email, setEmail] = useState('');
+  const [university, setUniversity] = useState('');
+  const [major, setMajor] = useState('');
   const [user, setUser] = useState(null);
 
   useEffect(() => {
@@ -56,6 +59,8 @@ function App() {
           // if we just created someone...
           return authUser.updateProfile({
             displayName: username,
+            university: university,
+            major: major
           });
         }
 
@@ -71,7 +76,7 @@ function App() {
       unsubscribe();
     }
 
-  }, [user, username]);
+  }, [user, username, university, major]);
    
   // useEffect -> runs a piece of code based on a specific condition
 
@@ -86,6 +91,14 @@ function App() {
     })
   }, []);
 
+  function postProfile() {
+    db.collection("account").add({
+        university: university,
+        major: major,
+        username: username
+    });
+  };
+
   const signUp = (event) => {
     event.preventDefault();
 
@@ -98,6 +111,8 @@ function App() {
     })
     
     .catch((error) => alert(error.message))
+
+    postProfile();
     
   }
 
@@ -133,21 +148,33 @@ function App() {
             </center>
             <Input
               type="text"
-              placeholder="username"
+              placeholder="Username"
               value={username}
               onChange={(e) => setUsername(e.target.value)}
             />
             <Input
-              placeholder="email"
+              placeholder="Email"
               type="text"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
             />   
             <Input
-              placeholder="password"
+              placeholder="Password"
               type="password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
+            />
+            <Input
+              placeholder="University"
+              type="text"
+              value={university}
+              onChange={(e) => setUniversity(e.target.value)}
+            />
+            <Input
+              placeholder="Major"
+              type="text"
+              value={major}
+              onChange={(e) => setMajor(e.target.value)}
             />
             <Button onClick={signUp}>Sign Up</Button>
          </form>
@@ -180,34 +207,64 @@ function App() {
               value={password}
               onChange={(e) => setPassword(e.target.value)}
             />
-            <Button type ="submit" onClick={signIn}>Sign Up</Button>
+            <Button type ="submit" onClick={signIn}>Sign In</Button>
          </form>
           
          </div>  
       </Modal>
-
+      { user ? (
+      <Modal
+        open={openProfile}
+        onClose={() => setOpenProfile(false)}
+      >
+        <div style={modalStyle} className={classes.paper}>
+          <form className="app_profile">
+            <center>
+              <img
+              className="app_profileHeader"
+              src="https://i.redd.it/l8cczd9174y51.png"
+              alt=""
+              />
+              <div className="profile_image">
+                <div className="profile_header">
+                  <Avatar
+                  className="profile_avatar"
+                  alt={user.displayName}
+                  src="/static/images/avatar/1.jpg"
+                />
+                <h3>{user.displayName}</h3>
+                </div>
+              </div>
+            </center>
+          </form>
+        </div>
+      </Modal>
+      ):(<h3></h3>)}
+    
       <div className="app_header">
         <img
           className="app_headerImage"
           src= "https://i.redd.it/l8cczd9174y51.png"
           alt=""
           />
+          
            {user ? (
+
+        <div className="app_loginContainer">
+        <Button onClick={() => setOpenProfile(true)}>Profile</Button>
+        <Button>Student Feed</Button>
+        <Button>Notifications</Button>
+        <Button onClick={postProfile}>Update Profile</Button>
         <Button onClick={() => auth.signOut()}>Logout</Button>
+        </div>
       ): (
+        
         <div className="app_loginContainer">
           <Button onClick={() => setOpenSignIn(true)}>Sign In</Button>
           <Button onClick={() => setOpen(true)}>Sign Up</Button>
         </div>
       )}
       </div>
-
-      {user?.displayName ? (
-          <ImageUpload username={user.displayName}/>
-      ): (
-          <h3>Sorry you need to login to upload</h3>
-        
-      )}
 
       <div className="app_posts">
         <div className="app_postsLeft">
@@ -235,7 +292,12 @@ function App() {
       </div>
     
 
-
+      {user?.displayName ? (
+          <ImageUpload username={user.displayName}/>
+      ): (
+          <h3>Sorry you need to login to upload</h3>
+        
+      )}
     </div>
   );
 }
