@@ -40,3 +40,8 @@
   flex-direction: column; 
    
 }
+
+.app_profile {
+  display: flex;
+  flex-direction: column;
+}

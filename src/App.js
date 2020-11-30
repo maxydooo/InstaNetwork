@@ -59,8 +59,8 @@ function App() {
           // if we just created someone...
           return authUser.updateProfile({
             displayName: username,
-            university: university,
-            major: major
+            // university: university,
+            // major: major
           });
         }
 
@@ -113,6 +113,8 @@ function App() {
     .catch((error) => alert(error.message))
 
     postProfile();
+
+    setOpen(false);
     
   }
 
@@ -196,13 +198,13 @@ function App() {
               />
             </center>
             <Input
-              placeholder="email"
+              placeholder="Email"
               type="text"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
             />   
             <Input
-              placeholder="password"
+              placeholder="Password"
               type="password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
@@ -227,12 +229,16 @@ function App() {
               />
               <div className="profile_image">
                 <div className="profile_header">
+                  <h2>{user.displayName}'s Profile</h2>
                   <Avatar
                   className="profile_avatar"
                   alt={user.displayName}
                   src="/static/images/avatar/1.jpg"
                 />
-                <h3>{user.displayName}</h3>
+                <h3>Username: {user.displayName}</h3>
+                <h4>University: {university}</h4>
+                <h4>Major: {major}</h4>
+                <h4>School Email: {user.email}</h4>
                 </div>
               </div>
             </center>
@@ -254,7 +260,6 @@ function App() {
         <Button onClick={() => setOpenProfile(true)}>Profile</Button>
         <Button>Student Feed</Button>
         <Button>Notifications</Button>
-        <Button onClick={postProfile}>Update Profile</Button>
         <Button onClick={() => auth.signOut()}>Logout</Button>
         </div>
       ): (
